@@ -89,7 +89,6 @@ module RailsAdmin
           @@actions ||= [
             Dashboard.new,
             Index.new,
-            Show.new,
             New.new,
             Edit.new,
             Export.new,
@@ -98,6 +97,9 @@ module RailsAdmin
             HistoryShow.new,
             HistoryIndex.new,
             ShowInApp.new,
+            # Show needs to be specified last because id can contain "/" if composite primary keys are used and "/" is
+            # specified as key separator.
+            Show.new,
           ]
         end
 

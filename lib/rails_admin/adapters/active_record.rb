@@ -1,5 +1,9 @@
 require 'active_record'
+require 'active_record/errors'
 require 'rails_admin/adapters/active_record/abstract_object'
+
+# ActiveRecord is shadowed below, so we extract what we need.
+AR_RECORD_NOT_FOUND = ActiveRecord::RecordNotFound
 
 module RailsAdmin
   module Adapters
@@ -20,9 +24,9 @@ module RailsAdmin
       end
 
       def get(id)
-        if object = model.where(model.primary_key => id).first
-          AbstractObject.new object
-        else
+        begin
+          AbstractObject.new(model.find(id))
+        rescue AR_RECORD_NOT_FOUND
           nil
         end
       end
@@ -299,7 +303,11 @@ module RailsAdmin
       end
 
       def association_foreign_key_lookup(association)
-        association.foreign_key.to_sym
+        if association.foreign_key.respond_to? :to_sym
+          association.foreign_key.to_sym
+        else
+          association.foreign_key
+        end
       end
     end
   end

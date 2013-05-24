@@ -12,6 +12,8 @@ class RailsAdmin::History < ActiveRecord::Base
   end
 
   def self.create_history_item(message, object, abstract_model, user)
+    # Suspended because of composite PKs.
+    return nil
     create(
        :message => [message].flatten.join(', '),
        :item => object.id,
